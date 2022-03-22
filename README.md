@@ -5,23 +5,21 @@ python -m pip install numpy
 python -m pip install pyqtgraph
 python -m pip install scipy
 python -m pip install pydub
+python -m pip install pyqt5
 
 Thre are errors from numpy periodically, and it may have to be downgraded to a different version. 
 
 
-https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyqt4 
 
 https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
 Only the above version of PyAudio will super high channel counts. 
 
 get correct version (e.g. for Python 3.6 and for your system)
 pip install filename.whl 
-e,g, for Windows:
-python -m pip install PyQt4-4.11.4-cp36-cp36m-win_amd64.whl
+
 
 bitdepth is 16 (Make sure your hardware matches, some FocusRites default to 24), and
 you can select the freqnency (but has to match what you set the hardware to, this doesn’t change the hardware to this sampling frequency). 
-
 
 This has only been tested on Win 7 - 11 w/ a Sapphire 4 channel USB audio device
 
