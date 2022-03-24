@@ -110,7 +110,7 @@ def saveConfig(savefilename,ui):
     import GlobalVars
     from numpy import array    
     
-    SaveFile= open((savefilename),'w')
+    SaveFile= open((savefilenamegithub),'w')
     
     parser = SafeConfigParser()
     

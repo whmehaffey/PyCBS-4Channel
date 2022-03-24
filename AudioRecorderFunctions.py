@@ -37,142 +37,7 @@ def RescanInputs():
 
     GlobalVars.numdevices=inputdevices
     p.terminate()
-
-def low_pass_filter_by_chunk(seg, cutoff, last_val):
-
-    import array
-    import math
     
-    """
-    # Forked from PyDub in order to keep the last values to avoid filter artefacats on chunked data
-        cutoff - Frequency (in Hz) where higher frequency signal will begin to
-            be reduced by 6dB per octave (doubling in frequency) above this point
-    """
-    RC = 1.0 / (cutoff * 2 * math.pi)
-    dt = 1.0 / seg.frame_rate
-
-    alpha = dt / (RC + dt)
-    
-    original = seg.get_array_of_samples()
-    filteredArray = array.array(seg.array_type, original)
-    
-    frame_count = int(seg.frame_count())    
-        
-    for j in range(seg.channels):        # 1-# Chanes
-        last_val[j] = last_val[j] + (alpha * (original[0] - last_val[j]))
-        filteredArray[j] = int(last_val[j])
-        
-    #pdb.set_trace();
-    for i in range(1, frame_count):
-        for j in range(seg.channels):
-            offset = (i * seg.channels) + j
-            last_val[j] = last_val[j] + (alpha * (original[offset] - last_val[j]))
-            filteredArray[offset] = int(last_val[j])
-
-    
-    return seg._spawn(data=filteredArray),last_val
-
-def high_pass_filter_by_chunk(seg, cutoff, last_val,last_data):
-    # Forked from PyDub in order to keep the last values to avoid filter artefacts on data being read in chunk by chunk
-    """
-        cutoff - Frequency (in Hz) where lower frequency signal will begin to
-            be reduced by 6dB per octave (doubling in frequency) below this point
-    """
-    import array
-    import math
-    from pydub import AudioSegment
-    from pydub.utils import get_min_max_value
-    import pdb
-
-    RC = 1.0 / (cutoff * 2 * math.pi)
-    dt = 1.0 / seg.frame_rate
-
-    alpha = RC / (RC + dt)
-
-    minval, maxval = get_min_max_value(seg.sample_width * 8)
-    
-    original = seg.get_array_of_samples()
-    filteredArray = array.array(seg.array_type, original)
-    
-    frame_count = int(seg.frame_count())  #should this be int?
-     
-    for j in range(seg.channels): #filter with the old data to get the first data point
-        #filteredArray[i] = original[i]
-        last_val[j] = alpha * (last_val[j] + original[0] - last_data[j])
-        filteredArray[j] = int(min(max(last_val[j], minval), maxval))
-    
-    for i in range(1, frame_count): #filter the rest. 
-        for j in range(seg.channels):
-            offset = (i * seg.channels) + j
-            offset_minus_1 = ((i-1) * seg.channels) + j
-
-            last_val[j] = alpha * (last_val[j] + original[offset] - original[offset_minus_1])
-            filteredArray[offset] = int(min(max(last_val[j], minval), maxval))
-            #last_data[j]=original[offset]; #shouldn't be necessary?
-            
-   # pdb.set_trace();
-    for i in range(frame_count, frame_count): #grab last data points to pass on for future use. 
-        for j in range(seg.channels):
-            offset = (i * seg.channels) + j
-            last_data[j]=original[offset];        
-            
-    
-    return seg._spawn(data=filteredArray), last_val, last_data
-
-def TriggeredRecordAudio(ui):
-
- import GlobalVars
- global graph_win1
- global graph_win2
- global graph_win3
- global graph_win4
-
- from pydub import AudioSegment
- import array
- import pdb
- 
- 
- RATE = int(ui.SampleRatecomboBox.currentText());# sampling frequency
- MIN_DUR=GlobalVars.buffertime*2+0.1;#
-
- SILENCE_LIMIT = GlobalVars.buffertime;
- PREV_AUDIO = GlobalVars.buffertime;
-
- p = pyaudio.PyAudio()
-
- CHANNELS=GlobalVars.CHANNELS;
- rel = int(RATE/(CHUNK))
- last_val_high = [0] * CHANNELS
- last_val_low = [0] * CHANNELS
- last_data = [0] * CHANNELS
- 
-
- stream=p.open(format=FORMAT,input_device_index=GlobalVars.inputdeviceindex,channels=GlobalVars.CHANNELS,rate=RATE,
-               input=True,
-               frames_per_buffer=CHUNK)
-    
- ui.ListeningTextBox_1.setText('<span style="color:green">quiet</span>')
- ui.ListeningTextBox_2.setText('<span style="color:green">quiet</span>')
- ui.ListeningTextBox_3.setText('<span style="color:green">quiet</span>')
- ui.ListeningTextBox_4.setText('<span style="color:green">quiet</span>')
- 
- audio2send1 = [] 
- audio2send2 = []
- audio2send3 = []
- audio2send4 = []
- 
-
- prev_audio1 = deque(maxlen=PREV_AUDIO * rel) #prepend audio running buffer
- prev_audio2 = deque(maxlen=PREV_AUDIO * rel) #prepend audio running buffer
- prev_audio3 = deque(maxlen=PREV_AUDIO * rel) #prepend audio running buffer
- prev_audio4 = deque(maxlen=PREV_AUDIO * rel) #prepend audio running buffer
- 
- perm_win1 = deque(maxlen=PREV_AUDIO*rel)
- perm_win2 = deque(maxlen=PREV_AUDIO*rel)
- perm_win3 = deque(maxlen=PREV_AUDIO*rel)
- perm_win4 = deque(maxlen=PREV_AUDIO*rel)
-
-
  plot_win1 = deque(maxlen=1*rel)
  plot_win2 = deque(maxlen=1*rel)
  plot_win3 = deque(maxlen=1*rel)
@@ -212,21 +77,17 @@ def TriggeredRecordAudio(ui):
   #sound, last_val_low=low_pass_filter_by_chunk(sound, 15000, last_val_low)
   #sound, last_val_high, last_data=high_pass_filter_by_chunk(sound, int(ui.HighPassspinBox.value()), last_val_high,last_data)
   
-  channels = sound.split_to_mono();
-
-  
+  channels = sound.split_to_mono();  
 
   if (ui.Ch1checkBox.isChecked()):
       
-      ch1=channels[0].raw_data;
-    #  pdb.set_trace();
+      ch1=channels[0].raw_data;    
       perm_win1.append(ch1)
       plot_win1.append(ch1)
       data = b''.join(list(plot_win1))
-      plotarray1 = array.array("h",data);
-      #pdb.set_trace();
+      plotarray1 = array.array("h",data);    
 
-      if(sum([x > (GlobalVars.threshold1) for x in plotarray1])>100 and len(audio2send1)<MAX_DUR*rel):  
+      if(sum([x > (GlobalVars.threshold1) for x in plotarray1])>25 and len(audio2send1)<MAX_DUR*rel):  
        if(not started1):
           ui.ListeningTextBox_1.setText('<span style="color:red">singing</span>')
           started1 = True
@@ -252,10 +113,11 @@ def TriggeredRecordAudio(ui):
 
       ch2=channels[1].raw_data;    
       plot_win2.append(ch2)
+      perm_win2.append(ch2)
       data = b''.join(list(plot_win2))
       plotarray2 = array.array("h",data); 
       
-      if (sum([x > GlobalVars.threshold2 for x in plotarray2])>100 and len(audio2send2)<MAX_DUR*rel):
+      if (sum([x > GlobalVars.threshold2 for x in plotarray2])>25 and len(audio2send2)<MAX_DUR*rel):
        if(not started2):
           ui.ListeningTextBox_2.setText('<span style="color:red">singing</span>')
           started2 = True
@@ -277,14 +139,14 @@ def TriggeredRecordAudio(ui):
        prev_audio2.append(ch2)
 
   if (ui.Ch3checkBox.isChecked()):
-      ch3=channels[2].raw_data;
       
+      ch3=channels[2].raw_data;      
       plot_win3.append(ch3)       
       perm_win3.append(ch3)
       data = b''.join(list(plot_win3))
       plotarray3 = array.array("h",data);                 
       
-      if (sum([x > GlobalVars.threshold3 for x in plotarray3])>100 and len(audio2send3)<MAX_DUR*rel):
+      if (sum([x > GlobalVars.threshold3 for x in plotarray3])>25 and len(audio2send3)<MAX_DUR*rel):
        if(not started3):
           ui.ListeningTextBox_3.setText('<span style="color:red">singing</span>')
           started3 = True
@@ -317,7 +179,7 @@ def TriggeredRecordAudio(ui):
       data = b''.join(list(plot_win4))
       plotarray4 = array.array("h",data);       
       
-      if (sum([x > GlobalVars.threshold4 for x in plotarray4])>100 and len(audio2send4)<MAX_DUR*rel):
+      if (sum([x > GlobalVars.threshold4 for x in plotarray4])>25 and len(audio2send4)<MAX_DUR*rel):
        if(not started4):
           ui.ListeningTextBox_4.setText('<span style="color:red">singing</span>')
           started4 = True
