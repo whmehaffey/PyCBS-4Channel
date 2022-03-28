@@ -66,7 +66,7 @@ def StartPushButton():
     ui.SampleRatecomboBox.setEnabled(False);
   
     ui.InputSelectioncomboBox.setEnabled(False)    
-    ui.BufferTimeSpinBox.setEnabled(True)
+    ui.BufferTimeSpinBox.setEnabled(False)
     ui.Ch1SaveDirPushButton.setEnabled(False);
     ui.Ch2SaveDirPushButton.setEnabled(False);
     ui.Ch3SaveDirPushButton.setEnabled(False);
