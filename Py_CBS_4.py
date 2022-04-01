@@ -176,7 +176,7 @@ def Ch1SaveDirPushButtonpushButtonClicked():
     import GlobalVars
     import pdb
     
-    savefilename = (QtGui.QFileDialog.getSaveFileName(ui,'Save Name/Directory', GlobalVars.Ch1DirPath, ''))
+    savefilename = (QtWidgets.QFileDialog.getSaveFileName(ui,'Save Name/Directory', GlobalVars.Ch1DirPath, ''))
     GlobalVars.Ch1DirPath = QtCore.QFileInfo(savefilename[0]).path();
     GlobalVars.Ch1fileName = QtCore.QFileInfo(savefilename[0]).fileName();
     
@@ -191,7 +191,7 @@ def Ch2SaveDirPushButtonpushButtonClicked():
     import os
     import GlobalVars
     
-    savefilename = (QtGui.QFileDialog.getSaveFileName(ui,'Save Name/Directory', GlobalVars.Ch2DirPath, '.wav'))
+    savefilename = (QtWidgets.QFileDialog.getSaveFileName(ui,'Save Name/Directory', GlobalVars.Ch2DirPath, '.wav'))
     GlobalVars.Ch2DirPath = QtCore.QFileInfo(savefilename[0]).path();
     GlobalVars.Ch2fileName = QtCore.QFileInfo(savefilename[0]).fileName();
 
@@ -207,7 +207,7 @@ def Ch3SaveDirPushButtonpushButtonClicked():
     import os
     import GlobalVars
     
-    savefilename = (QtGui.QFileDialog.getSaveFileName(ui,'Save Name/Directory', GlobalVars.Ch3DirPath, '.wav'))
+    savefilename = (QtWidgets.QFileDialog.getSaveFileName(ui,'Save Name/Directory', GlobalVars.Ch3DirPath, '.wav'))
     GlobalVars.Ch3DirPath = QtCore.QFileInfo(savefilename[0]).path();
     GlobalVars.Ch3fileName = QtCore.QFileInfo(savefilename[0]).fileName();
 
@@ -220,7 +220,7 @@ def Ch4SaveDirPushButtonpushButtonClicked():
     import os
     import GlobalVars
     
-    savefilename = (QtGui.QFileDialog.getSaveFileName(ui,'Save Name/Directory', GlobalVars.Ch4DirPath, '.wav'))
+    savefilename = (QtWidgets.QFileDialog.getSaveFileName(ui,'Save Name/Directory', GlobalVars.Ch4DirPath, '.wav'))
     GlobalVars.Ch4DirPath = QtCore.QFileInfo(savefilename[0]).path();
     GlobalVars.Ch4fileName = QtCore.QFileInfo(savefilename[0]).fileName();
 
@@ -232,7 +232,7 @@ def loadConfig_ButtonPressed():
     import os
     import GlobalVars       
             
-    loadfilename = (QtGui.QFileDialog.getOpenFileName(ui,'Open Config File', GlobalVars.Ch1DirPath,'*.TAFcfg'))  
+    loadfilename = (QtWidgets.QFileDialog.getOpenFileName(ui,'Open Config File', GlobalVars.Ch1DirPath,'*.TAFcfg'))  
     GlobalVars.loadConfig(loadfilename[0],ui)
     
 
@@ -240,7 +240,7 @@ def loadConfig_ButtonPressed():
 def saveConfig_ButtonPressed():
     import GlobalVars
   
-    savefilename = (QtGui.QFileDialog.getSaveFileName(ui,'Open Config File', GlobalVars.Ch1DirPath,'*.TAFcfg','*.TAFcfg'))  
+    savefilename = (QtWidgets.QFileDialog.getSaveFileName(ui,'Open Config File', GlobalVars.Ch1DirPath,'*.TAFcfg','*.TAFcfg'))  
     GlobalVars.saveConfig(savefilename[0],ui)
 
 def updateSampleRate():
@@ -248,9 +248,9 @@ def updateSampleRate():
     GlobalVars.SampleRate=int(ui.SampleRatecomboBox.currentText())
   
     
-class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
-        QtGui.QMainWindow.__init__(self)
+        QtWidgets.QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
         
@@ -316,7 +316,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ui = MainWindow()
     ui.show()
     RescanInputsButtonPushed()

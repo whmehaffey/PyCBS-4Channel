@@ -1,5 +1,5 @@
-Works w/ Pyton 3.6-10 (PyAudio Suuports up to that). 
-python -m pip install --upgrade pip 
+Works w/ Pyton 3.6-10 (PyAudio supports up to that). 
+
 python -m pip install pyserial 
 python -m pip install numpy 
 python -m pip install pyqtgraph
@@ -10,11 +10,10 @@ python -m pip install pyqt5
 Thre are errors from numpy periodically, and it may have to be downgraded to a different version. 
 
 
-
 https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
 Only the above version of PyAudio will super high channel counts. 
 
-get correct version (e.g. for Python 3.6 and for your system)
+get correct version (e.g. for Python 3.x and for your system)
 pip install filename.whl 
 
 
