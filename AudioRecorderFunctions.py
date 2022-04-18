@@ -52,7 +52,7 @@ def TriggeredRecordAudio(ui):
  
  
  RATE = int(ui.SampleRatecomboBox.currentText());# sampling frequency
- MIN_DUR=GlobalVars.buffertime*2+0.1;#
+ MIN_DUR=GlobalVars.buffertime+0.1;#
 
  SILENCE_LIMIT = GlobalVars.buffertime;
  PREV_AUDIO = GlobalVars.buffertime;
