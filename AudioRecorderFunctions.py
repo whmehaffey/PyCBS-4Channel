@@ -49,6 +49,7 @@ def TriggeredRecordAudio(ui):
  from pydub import AudioSegment
  import array
  import pdb
+ import audioop
  
  
  RATE = int(ui.SampleRatecomboBox.currentText());# sampling frequency
@@ -78,8 +79,7 @@ def TriggeredRecordAudio(ui):
  audio2send1 = [] 
  audio2send2 = []
  audio2send3 = []
- audio2send4 = []
- 
+ audio2send4 = [] 
 
  prev_audio1 = deque(maxlen=PREV_AUDIO * rel) #prepend audio running buffer
  prev_audio2 = deque(maxlen=PREV_AUDIO * rel) #prepend audio running buffer
@@ -90,7 +90,6 @@ def TriggeredRecordAudio(ui):
  perm_win2 = deque(maxlen=PREV_AUDIO*rel)
  perm_win3 = deque(maxlen=PREV_AUDIO*rel)
  perm_win4 = deque(maxlen=PREV_AUDIO*rel)
-
 
  plot_win1 = deque(maxlen=math.ceil(0.5*rel)) # ! 500ms of display;
  plot_win2 = deque(maxlen=math.ceil(0.5*rel))
@@ -138,14 +137,19 @@ def TriggeredRecordAudio(ui):
   if (ui.Ch1checkBox.isChecked()):
       
       ch1=channels[0].raw_data;
+     # pdb.set_trace()
     #  pdb.set_trace();
       perm_win1.append(ch1)
       plot_win1.append(ch1)
+      
       data = b''.join(list(plot_win1))
+      
       plotarray1 = array.array("h",data);
-      #pdb.set_trace();
-
-      if(sum([x > (GlobalVars.threshold1) for x in plotarray1])>100 and len(audio2send1)<MAX_DUR*rel):  
+      #plotarray1=data;
+      data = b''.join(list(perm_win1))
+      currmax=audioop.max(data,2)
+      
+      if (currmax > GlobalVars.threshold1) and (len(audio2send1)<MAX_DUR*rel):  
        if(not started1):
           ui.ListeningTextBox_1.setText('<span style="color:red">singing</span>')
           started1 = True
@@ -173,9 +177,13 @@ def TriggeredRecordAudio(ui):
       plot_win2.append(ch2)
       perm_win1.append(ch2)
       data = b''.join(list(plot_win2))
-      plotarray2 = array.array("h",data); 
+      plotarray2 = array.array("h",data);
       
-      if (sum([x > GlobalVars.threshold2 for x in plotarray2])>100 and len(audio2send2)<MAX_DUR*rel):
+      data = b''.join(list(perm_win2))
+      currmax=audioop.max(data,2)
+      
+     
+      if (currmax >  GlobalVars.threshold2) and (len(audio2send2)<MAX_DUR*rel):  
        if(not started2):
           ui.ListeningTextBox_2.setText('<span style="color:red">singing</span>')
           started2 = True
@@ -203,8 +211,11 @@ def TriggeredRecordAudio(ui):
       perm_win3.append(ch3)
       data = b''.join(list(plot_win3))
       plotarray3 = array.array("h",data);                 
+      data = b''.join(list(perm_win3))
+      currmax=audioop.max(data,2)
+
       
-      if (sum([x > GlobalVars.threshold3 for x in plotarray3])>100 and len(audio2send3)<MAX_DUR*rel):
+      if (currmax > GlobalVars.threshold3) and (len(audio2send3)<MAX_DUR*rel):  
        if(not started3):
           ui.ListeningTextBox_3.setText('<span style="color:red">singing</span>')
           started3 = True
@@ -236,8 +247,11 @@ def TriggeredRecordAudio(ui):
       plot_win4.append(ch4)       
       data = b''.join(list(plot_win4))
       plotarray4 = array.array("h",data);       
+      data = b''.join(list(perm_win4))
+      currmax=audioop.max(data,2)
+
       
-      if (sum([x > GlobalVars.threshold4 for x in plotarray4])>100 and len(audio2send4)<MAX_DUR*rel):
+      if (currmax > GlobalVars.threshold4) and (len(audio2send4)<MAX_DUR*rel):  
        if(not started4):
           ui.ListeningTextBox_4.setText('<span style="color:red">singing</span>')
           started4 = True
