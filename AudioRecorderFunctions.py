@@ -175,7 +175,7 @@ def TriggeredRecordAudio(ui):
 
       ch2=channels[1].raw_data;    
       plot_win2.append(ch2)
-      perm_win1.append(ch2)
+      perm_win2.append(ch2)
       data = b''.join(list(plot_win2))
       plotarray2 = array.array("h",data);
       
