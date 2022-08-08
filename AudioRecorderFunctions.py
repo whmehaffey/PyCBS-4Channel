@@ -137,15 +137,12 @@ def TriggeredRecordAudio(ui):
   if (ui.Ch1checkBox.isChecked()):
       
       ch1=channels[0].raw_data;
-     # pdb.set_trace()
-    #  pdb.set_trace();
       perm_win1.append(ch1)
       plot_win1.append(ch1)
       
       data = b''.join(list(plot_win1))
       
-      plotarray1 = array.array("h",data);
-      #plotarray1=data;
+      plotarray1 = array.array("h",data);      
       data = b''.join(list(perm_win1))
       currmax=audioop.max(data,2)
       
